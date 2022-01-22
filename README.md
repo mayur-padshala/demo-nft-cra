@@ -39,3 +39,7 @@ See the section about [deployment](https://facebook.github.io/create-react-app/d
 
 ### Demo
 https://demo-nft-cra.vercel.app/
+
+Sample verification codes are:
+Phone signup: 583024
+Email signup: 102938
