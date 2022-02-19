@@ -131,7 +131,7 @@ function SetAPassword() {
       },
       onSuccess: (response: any) => {
         dispatch(deleteDraft());
-        localStorage.setItem('userData', JSON.stringify(response.data));
+        localStorage.removeItem('draft');
         dispatch(authenticate(response.data));
         navigate('/user/dashboard', { replace: true });
       },

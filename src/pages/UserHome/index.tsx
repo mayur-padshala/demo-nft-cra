@@ -3,6 +3,8 @@ import { css } from '@emotion/react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import HeaderAlt from 'pages/UserHome/components/HeaderAlt';
 import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from 'store';
 
 const styles = {
   container: css`
@@ -13,9 +15,12 @@ const styles = {
 function UserHome() {
   const navigate = useNavigate();
   const location = useLocation();
+  const accountID = useSelector((state: RootState) => state.user.accountID);
 
   useEffect(() => {
-    if (navigate && location && location.pathname === '/user') {
+    if (!accountID) {
+      navigate('/', { replace: true });
+    } else if (location?.pathname === '/user') {
       navigate('dashboard');
     }
   }, [location.pathname, navigate]);

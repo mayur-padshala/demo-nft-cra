@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
-import { forwardRef } from 'react';
+import React, { forwardRef } from 'react';
 import { text } from 'utils/colors';
 import Input from 'components/Input';
 
@@ -20,7 +20,7 @@ const styles = {
 
 function LabelledInput({
   label, placeholder, className, inputClassName, ...props
-}: any, ref: any) {
+}: any, ref: React.Ref<any>) {
   return (
     <div css={styles.container} className={className}>
       <span css={styles.label}>{label}</span>

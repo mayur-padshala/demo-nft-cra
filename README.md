@@ -21,9 +21,9 @@ You may also see any lint errors in the console.
 - [Emotion](https://emotion.sh/) for css in js
 - [React Hook Form](https://react-hook-form.com/) for building efficient forms and data validation
 - [Yup](https://github.com/jquense/yup) in combination with hook form to make my life easier while dealing with validations
-- [React Input Mask](https://github.com/sanniassin/react-input-mask) for some cool masking effects
+- [React Number Format](https://www.npmjs.com/package/react-number-format) for formatting masking input values
 - [React Spinners](https://www.npmjs.com/package/react-spinners) for cool loading animations
-- [React Toastify](https://www.npmjs.com/package/react-toastify) for good looking toasts
+- [React Toastify](https://www.npmjs.com/package/react-toastify) for good-looking toasts
 
 Emotion 
 

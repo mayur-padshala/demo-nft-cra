@@ -4,8 +4,8 @@ import { useCallback, useEffect, useState } from 'react';
 import Header from 'components/Header';
 import Button from 'components/Button';
 import Divider from 'components/Divider';
-import { useForm } from 'react-hook-form';
-import InputMask from 'react-input-mask';
+import { useForm, Controller } from 'react-hook-form';
+import NumberFormat from 'react-number-format';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
@@ -86,7 +86,7 @@ function GetStarted() {
       .email('Please enter a valid email')
       : Yup.string()
         .required('Phone number  is required')
-        .matches(/^(\([0-9]{3}\) |[0-9]{3}-)[0-9]{3}[-\s][0-9]{4}$/, 'Please enter a valid phone number'),
+        .matches(/^\+1 (\([0-9]{3}\) |[0-9]{3}-)[0-9]{3}[-\s][0-9]{4}$/, 'Please enter a valid phone number'),
   });
 
   const validationOpt = { resolver: yupResolver(formSchema) };
@@ -97,6 +97,7 @@ function GetStarted() {
     handleSubmit,
     formState: { isValid, errors },
     reset,
+    control,
   } = useForm({
     mode: 'onChange',
     reValidateMode: 'onChange',
@@ -148,21 +149,25 @@ function GetStarted() {
           />
         )}
         {selectedTab === 1 && (
-          <InputMask
-            mask="(999) 999 9999"
-            maskPlaceholder=""
-            {...register('username')}
-          >
-            {(inputProps: any) => (
-              <Input
-                css={styles.input}
-                className={errors.username ? 'error' : ''}
-                placeholder="Ex (337) 378 8383"
-                type="tel"
-                {...inputProps}
-              />
-            )}
-          </InputMask>
+          <Controller
+            render={
+              ({ field }) => (
+                <NumberFormat
+                  placeholder="Ex (337) 378 8383"
+                  css={styles.input}
+                  className={errors.username ? 'error' : ''}
+                  customInput={Input}
+                  format="+1 (###) ### ####"
+                  onValueChange={({ formattedValue }) => {
+                    setValue('username', formattedValue);
+                  }}
+                  {...field}
+                />
+              )
+            }
+            control={control}
+            name="username"
+          />
         )}
         <FormFieldErrorMessage show={errors.username} text={errors.username?.message} />
         <Button

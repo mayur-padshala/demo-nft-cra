@@ -11,6 +11,7 @@ const styles = {
     align-items: center;
     width: 100%;
     gap: 14px;
+    cursor: pointer;
   `,
   image: css`
     width: 69px;

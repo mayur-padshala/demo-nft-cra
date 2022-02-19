@@ -13,6 +13,7 @@ const styles = {
     width: 100%;
     background-color: ${color};
     border-radius: 6px;
+    cursor: pointer;
   `,
   image: css`
     width: 35px;

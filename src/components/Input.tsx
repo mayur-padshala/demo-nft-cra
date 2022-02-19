@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
-import { forwardRef } from 'react';
+import React, { forwardRef } from 'react';
 import { accent } from 'utils/colors';
 
 const styles = {
@@ -22,7 +22,7 @@ const styles = {
   `,
 };
 
-function TextInput(props: any, ref: any) {
+function TextInput(props: any, ref: React.Ref<any>) {
   return (
     <input
       ref={ref}

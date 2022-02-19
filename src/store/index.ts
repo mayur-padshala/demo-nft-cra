@@ -8,8 +8,9 @@ export const store = configureStore({
 });
 
 window.onbeforeunload = () => {
-  const { draft } = store.getState().user;
+  const { draft, ...userData } = store.getState().user;
   localStorage.setItem('draft', JSON.stringify(draft));
+  localStorage.setItem('userData', JSON.stringify(userData));
 };
 
 // Infer the `RootState` and `AppDispatch` types from the store itself

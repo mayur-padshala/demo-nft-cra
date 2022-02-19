@@ -49,11 +49,9 @@ export default function Splash() {
   const accountID = useSelector((state: RootState) => state.user.accountID);
 
   useEffect(() => {
-    if (navigate) {
-      setTimeout(() => {
-        navigate(accountID ? '/user/dashboard' : '/get-started', { replace: true });
-      }, 3000);
-    }
+    setTimeout(() => {
+      navigate(accountID ? '/user/dashboard' : '/get-started', { replace: true });
+    }, 3000);
   }, [navigate, accountID]);
 
   return (

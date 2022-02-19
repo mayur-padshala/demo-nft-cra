@@ -4,6 +4,7 @@ import coloredIcon from 'assets/img/button-icon-colored.svg';
 import whiteIcon from 'assets/img/button-icon-white.svg';
 import { RingLoader } from 'react-spinners';
 import { accent, blue, text as textColor } from 'utils/colors';
+import React, { forwardRef } from 'react';
 
 const styles = {
   button: css`
@@ -47,9 +48,10 @@ const styles = {
 
 function Button({
   text, variant, loading, ...props
-}: any) {
+}: any, ref: React.Ref<any>) {
   return (
     <button
+      ref={ref}
       // @ts-ignore
       css={[styles.button, styles[variant], loading && styles.loading]}
       disabled={loading || variant === 'disabled'}
@@ -67,4 +69,4 @@ function Button({
   );
 }
 
-export default Button;
+export default forwardRef(Button);

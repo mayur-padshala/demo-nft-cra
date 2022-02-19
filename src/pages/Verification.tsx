@@ -3,11 +3,10 @@ import { css } from '@emotion/react';
 import Header from 'components/Header';
 import Button from 'components/Button';
 import Divider from 'components/Divider';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import closeIcon from 'assets/img/header-icon-close.svg';
 import { toast } from 'react-toastify';
-import InputMask from 'react-input-mask';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useMutation } from 'react-query';
@@ -18,6 +17,9 @@ import { accent, blue } from 'utils/colors';
 import Input from 'components/Input';
 import { post } from 'api/myAwesomeFetch';
 import endpoint from 'utils/helpers';
+import NumberFormat from 'react-number-format';
+import * as Yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup/dist/yup';
 
 const styles = {
   container: css`
@@ -88,19 +90,31 @@ const styles = {
 function Verification() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const lastDeleted = useRef(null);
+  const submitBtn = useRef<HTMLElement>();
 
   const draft = useSelector((state: RootState) => state.user.draft);
 
   const mutation = useMutation((data: any) => post(endpoint('verify-code'), data));
 
+  const formSchema = Yup.object().shape([1, 2, 3, 4, 5, 6].reduce((o: any, i) => {
+    o[`code-${i}`] = Yup.string()
+      .required()
+      .matches(/^[0-9]$/);
+    return o;
+  }, {}));
+
+  const validationOpt = { resolver: yupResolver(formSchema) };
+
   const {
-    register,
+    control,
     handleSubmit,
     setValue,
-    formState: { isValid, errors },
+    formState: { isValid },
   } = useForm({
     mode: 'onChange',
     reValidateMode: 'onChange',
+    ...validationOpt,
   });
 
   const onSubmit = useCallback((data: any) => {
@@ -125,7 +139,7 @@ function Verification() {
     document.getElementsByName('code-1')[0].focus();
   }, []);
 
-  const handlePaste = useCallback((inputNumber, e: any) => {
+  const handlePaste = useCallback((e: any) => {
     const clipboardData = e.clipboardData?.getData('Text')?.trim();
     const code = parseInt(clipboardData!, 10);
     if (Number.isInteger(code) && `${code}`?.length === 6) {
@@ -134,16 +148,27 @@ function Verification() {
         document.getElementsByName(`code-${i + 1}`)[0].setAttribute('value', c);
       });
       setTimeout(() => {
-        document.getElementsByName('code-6')[0].focus();
-      }, 200);
+        submitBtn.current?.focus();
+      }, 50);
       return false;
     }
     return true;
-  }, [setValue]);
+  }, [setValue, submitBtn.current]);
+
+  const handleKeyDown = useCallback((e) => {
+    const isDelete = (e.key === 'Backspace' || e.key === 'Delete');
+    if (isDelete) {
+      lastDeleted.current = e.target.value;
+    }
+  }, []);
 
   const handleKeyUp = useCallback((e: any, inputNumber) => {
-    let nextElement = null;
+    let nextElement: any = null;
     const isDelete = (e.key === 'Backspace' || e.key === 'Delete');
+    if (isDelete && lastDeleted.current) {
+      lastDeleted.current = null;
+      return false;
+    }
     const isNumber = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'].indexOf(e.key) !== -1;
     if (isNumber) {
       setValue(`code-${inputNumber}`, e.key);
@@ -155,17 +180,25 @@ function Verification() {
         // eslint-disable-next-line prefer-destructuring
         nextElement = elems[0];
       }
-    } else if (isNumber && inputNumber < 6) {
-      const elems = document.getElementsByName(`code-${inputNumber + 1}`);
-      if (elems.length) {
-        // eslint-disable-next-line prefer-destructuring
-        nextElement = elems[0];
+    } else if (isNumber && inputNumber <= 6) {
+      if (inputNumber < 6) {
+        const elems = document.getElementsByName(`code-${inputNumber + 1}`);
+        if (elems.length) {
+          // eslint-disable-next-line prefer-destructuring
+          nextElement = elems[0];
+        }
+      } else {
+        setTimeout(() => {
+          submitBtn.current!.focus();
+        }, 50);
+        return true;
       }
     }
     if (nextElement) {
       nextElement.focus();
     }
-  }, [setValue]);
+    return true;
+  }, [setValue, submitBtn.current, lastDeleted.current]);
 
   return (
     <>
@@ -192,36 +225,37 @@ function Verification() {
           <div css={styles.headingText}>
             We&apos;ve sent a 6-digit verification code to your phone
             <span css={styles.username}>
-              +1
               {draft?.username}
             </span>
           </div>
         )}
         <div css={styles.verificationCodeInputsContainer}>
           {[1, 2, 3, 4, 5, 6].map((inputNumber) => (
-            <InputMask
+            <Controller
               key={`code-${inputNumber}`}
-              mask="9"
-              maskPlaceholder=""
-              {...register(`code-${inputNumber}`, {
-                required: true,
-                pattern: /^[0-9]$/,
-              })}
-              onPaste={(e: any) => handlePaste(inputNumber, e)}
-            >
-              {(inputProps: any) => (
-                <Input
-                  css={styles.input}
-                  className={errors.username ? 'error' : ''}
-                  type="tel"
-                  onKeyUp={(e: any) => handleKeyUp(e, inputNumber)}
-                  {...inputProps}
-                />
-              )}
-            </InputMask>
+              render={
+                ({ field }) => (
+                  <NumberFormat
+                    css={styles.input}
+                    customInput={Input}
+                    format="#"
+                    onPaste={handlePaste}
+                    onKeyDown={handleKeyDown}
+                    onKeyUp={(e: any) => handleKeyUp(e, inputNumber)}
+                    onValueChange={({ formattedValue }) => {
+                      setValue(`code-${inputNumber}`, formattedValue);
+                    }}
+                    {...field}
+                  />
+                )
+              }
+              control={control}
+              name={`code-${inputNumber}`}
+            />
           ))}
         </div>
         <Button
+          ref={submitBtn}
           css={styles.button}
           variant={isValid ? 'primary' : 'disabled'}
           text="Continue"

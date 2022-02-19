@@ -23,10 +23,12 @@ const styles = {
   iconLeft: css`
     width: 20px;
     height: 20px;
+    cursor: pointer;
   `,
   iconRight: css`
     width: 26px;
     height: 26px;
+    cursor: pointer;
   `,
 };
 

@@ -41,6 +41,7 @@ const styles = {
     align-items: center;
     justify-content: center;
     width: 46px;
+    cursor: pointer;
   `,
   body: css`
     flex: 1;
@@ -93,11 +94,11 @@ const experiences = [{
   image: defiSwap,
   slug: 'defi-swap',
 }, {
-  title: 'DeFi Swap',
-  caption: 'Swap your digital assets',
-  users: '+200 users',
+  title: 'Docu Sign',
+  caption: 'sign your digital assets',
+  users: '+1k users',
   image: docuSign,
-  slug: 'defi-swap',
+  slug: 'docu-sign',
 }];
 
 const categories = [{

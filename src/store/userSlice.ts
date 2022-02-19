@@ -12,6 +12,9 @@ export interface UserState {
 const draft = JSON.parse(localStorage.getItem('draft') ?? '{}');
 const userData = JSON.parse(localStorage.getItem('userData') ?? 'null');
 
+localStorage.removeItem('draft');
+localStorage.removeItem('userData');
+
 const initialState: UserState = {
   draft,
   username: userData?.username,
